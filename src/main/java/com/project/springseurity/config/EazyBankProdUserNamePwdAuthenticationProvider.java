@@ -3,6 +3,7 @@ package com.project.springseurity.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -12,9 +13,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile("!prod")
+@Profile("prod")
 @RequiredArgsConstructor
-public class EazyBankUserNamePwdAuthenticationProvider implements AuthenticationProvider {
+public class EazyBankProdUserNamePwdAuthenticationProvider implements AuthenticationProvider {
 
 
     private final UserDetailsService userDetailsService;
@@ -26,14 +27,12 @@ public class EazyBankUserNamePwdAuthenticationProvider implements Authentication
         String userName = authentication.getName();
         String pwd = authentication.getCredentials().toString();
         UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-        // we can write a custom logic here
-        // for non prod no need to check a password
-//        if (passwordEncoder.matches(pwd, userDetails.getPassword())) {
-//            return new UsernamePasswordAuthenticationToken(userName, pwd, userDetails.getAuthorities());
-//        } else {
-//            throw new BadCredentialsException("Invalid password");
-//        }
-    return new UsernamePasswordAuthenticationToken(userName, pwd, userDetails.getAuthorities());
+      //   we can write a custom logic here commanding password validation
+        if (passwordEncoder.matches(pwd, userDetails.getPassword())) {
+            return new UsernamePasswordAuthenticationToken(userName, pwd, userDetails.getAuthorities());
+        } else {
+            throw new BadCredentialsException("Invalid password");
+        }
 
     }
 
