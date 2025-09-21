@@ -29,7 +29,7 @@ public class SecurityConfig {
 //        http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());
 //        http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
 
-        http.sessionManagement(smc->smc.invalidSessionUrl("/invalidSessiom").maximumSessions(1)
+        http.sessionManagement(smc->smc.invalidSessionUrl("/invalidSession").maximumSessions(1)
                         .maxSessionsPreventsLogin(true)).
                 requiresChannel(rcc->rcc.anyRequest().requiresInsecure()). // only http
 

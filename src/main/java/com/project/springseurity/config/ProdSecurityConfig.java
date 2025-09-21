@@ -26,7 +26,7 @@ public class ProdSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
-        http.sessionManagement(smc->smc.invalidSessionUrl("/invalidSessiom").maximumSessions(1).maxSessionsPreventsLogin(true)).
+        http.sessionManagement(smc->smc.invalidSessionUrl("/invalidSession").maximumSessions(1).maxSessionsPreventsLogin(true)).
                 requiresChannel(rcc->rcc.anyRequest().requiresSecure()). // only https request accept in production
 
 //        http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());
