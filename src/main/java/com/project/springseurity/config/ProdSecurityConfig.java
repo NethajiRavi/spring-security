@@ -14,8 +14,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
-@Profile("!prod")
-public class SecurityConfig {
+@Profile("prod")
+public class ProdSecurityConfig {
 
 //    @Bean
 //    public UserDetailsService userDetailsService(DataSource dataSource){
@@ -26,22 +26,18 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
 
+        http.sessionManagement(smc->smc.invalidSessionUrl("/invalidSessiom").maximumSessions(1).maxSessionsPreventsLogin(true)).
+                requiresChannel(rcc->rcc.anyRequest().requiresSecure()). // only https request accept in production
+
 //        http.authorizeHttpRequests((requests) -> requests.anyRequest().denyAll());
 //        http.authorizeHttpRequests((requests) -> requests.anyRequest().permitAll());
-
-        http.sessionManagement(smc->smc.invalidSessionUrl("/invalidSessiom").maximumSessions(1)
-                        .maxSessionsPreventsLogin(true)).
-                requiresChannel(rcc->rcc.anyRequest().requiresInsecure()). // only http
-
-                csrf(csrfConfig-> csrfConfig.disable())
+        csrf(csrfConfig-> csrfConfig.disable())
                         .authorizeHttpRequests((requests) -> requests
                                 .requestMatchers("/myAccount","/myBalance","myCards","myLoans").authenticated()
                                 .requestMatchers("/myContact","/myNotification","/error","/register").permitAll());
         http.formLogin(withDefaults());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint( new CustomBasicAuthenticationEntryPoint()));
-        http.exceptionHandling(ehc-> new CustomAccessDeniedHandler()) ;
-//        http.exceptionHandling(ehc->
-//                ehc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint())); //Global config
+        http.exceptionHandling(ehc-> new CustomAccessDeniedHandler());
         return http.build();
     }
 
