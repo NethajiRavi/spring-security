@@ -24,5 +24,7 @@ public class AuthenticationEvent {
                 failureEvent.getAuthentication().getName(),
                 failureEvent.getException().getMessage());
     }
-    
+
+
+
 }
