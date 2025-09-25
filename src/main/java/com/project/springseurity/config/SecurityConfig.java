@@ -3,7 +3,10 @@ package com.project.springseurity.config;
 
 import com.project.springseurity.exceptionhandling.CustomAccessDeniedHandler;
 import com.project.springseurity.exceptionhandling.CustomBasicAuthenticationEntryPoint;
+import com.project.springseurity.filter.AuthoritiesLoggingFilter;
+import com.project.springseurity.filter.AuthoritiesLoginAtFilter;
 import com.project.springseurity.filter.CsrfCookieFilter;
+import com.project.springseurity.filter.RequestValidationBeforeFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +63,9 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/myContact","/myNotification")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
+                .addFilterBefore(new RequestValidationBeforeFilter(),BasicAuthenticationFilter.class)
+                .addFilterAfter(new AuthoritiesLoggingFilter(), BasicAuthenticationFilter.class)
+                .addFilterAt(new AuthoritiesLoginAtFilter(), BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) ->
                         requests.requestMatchers("/myAccount").hasAuthority("VIEWACCOUNT")
                                 .requestMatchers("/myBalance").hasAuthority("VIEWBALANCE")
