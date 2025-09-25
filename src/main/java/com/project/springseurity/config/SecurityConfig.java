@@ -60,8 +60,10 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/myContact","/myNotification")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
                 .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
-                .authorizeHttpRequests((requests) -> requests
-                                .requestMatchers("/myAccount","/myBalance","myCards","myLoans").authenticated()
+                .authorizeHttpRequests((requests) ->
+                        requests.requestMatchers("/myAccount").hasAuthority("VIEWACCOUNT")
+                                .requestMatchers("/myBalance").hasAuthority("VIEWBALANCE")
+                               // requestMatchers("/myAccount","/myBalance","myCards","myLoans").authenticated()
                                 .requestMatchers("/myContact","/myNotification","/error","/register","/invalidSession").permitAll());
         http.formLogin(withDefaults());
         http.httpBasic(hbc -> hbc.authenticationEntryPoint( new CustomBasicAuthenticationEntryPoint()));
